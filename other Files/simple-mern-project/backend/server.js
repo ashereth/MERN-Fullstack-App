@@ -27,6 +27,7 @@ app.get('/products', (req, res, next) => {
 });
 //make new product
 app.post('/product', (req, res, next) => {
+  //get title and price
   const { title, price } = req.body;
 
   if (!title || title.trim().length === 0 || !price || price <= 0) {
@@ -34,13 +35,13 @@ app.post('/product', (req, res, next) => {
       message: 'Invalid input, please enter a valid title and price.'
     });
   }
-
+  //create a new product object with the title and price we got
   const createdProduct = {
     id: uuid(),
     title,
     price
   };
-
+  //add product to storage
   DUMMY_PRODUCTS.push(createdProduct);
 
   res
