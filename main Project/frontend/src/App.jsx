@@ -5,6 +5,7 @@ import MainNavigation from './shared/components/Navigation/MainNavigation';
 import Users from './user/pages/Users';
 import NewPlace from './places/pages/NewPlace';
 import UserPlaces from './places/pages/UserPlaces';
+import UpdatePlace from './places/pages/UpdatePlace';
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
             </Route>
             <Route path="/places/new" exact>{/*render below code on path /users */}
               <NewPlace />
+            </Route>
+            {/**this route must be rendered after /places/new other because 'new' could be an id and /places/new would never be reachable */}
+            <Route path="/places/:placeId" exact>{/*render below code on path /users */}
+              <UpdatePlace />
             </Route>
             <Redirect to="/" />{/*if non existing url then redirect to / */}
           </Switch>

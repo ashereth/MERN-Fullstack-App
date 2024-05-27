@@ -1,5 +1,5 @@
 import React from 'react';
-import reactRouterDom, { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import PlaceList from '../components/PlaceList';
 

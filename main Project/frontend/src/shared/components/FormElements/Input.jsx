@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 
 import './Input.css';
 import { validate } from "../../util/validators";
@@ -11,11 +11,11 @@ const inputReducer = (state, action) => {
                 value: action.val,
                 isValid: validate(action.val, action.validators)
             };
-        case 'TOUCH': 
-        return {
-            ...state,
-            isTouched: true
-        }
+        case 'TOUCH':
+            return {
+                ...state,
+                isTouched: true
+            }
 
         //return unchanged state on default
         default:
@@ -26,7 +26,20 @@ const inputReducer = (state, action) => {
 const Input = props => {
     //use useReducer to manage complex state/interconnnected state
     //pass it a function and initial state
-    const [inputState, dispatch] = useReducer(inputReducer, { value: '', isValid: false, isTouched: false });
+    const [inputState, dispatch] = useReducer(
+        inputReducer, {
+        value: props.initialValue || '',
+        isValid: props.initialValid || false,
+        isTouched: false
+        }
+    );
+
+    const { id, onInput } = props;
+    const { value, isValid } = inputState;
+
+    useEffect(() => {
+        props.onInput(id, value, isValid)
+    }, [id, value, isValid, onInput])
 
     const changeHandler = event => {
         dispatch({ type: 'CHANGE', val: event.target.value, validators: props.validators });
@@ -36,7 +49,7 @@ const Input = props => {
         dispatch({
             type: 'TOUCH'
         })
-    }
+    };
 
     //if given input as a prop then render an input field otherwise just render a text area
     const element = props.element === 'input' ? (

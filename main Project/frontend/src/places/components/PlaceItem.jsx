@@ -48,7 +48,6 @@ const PlaceItem = props => {
                         <Button danger >DELETE</Button>
                     </div>
                 </Card>
-
             </li>
         </React.Fragment >
 
