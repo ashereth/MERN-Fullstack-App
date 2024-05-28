@@ -1,57 +1,18 @@
 import express from "express";
 
+import { getPlaceById, getPlacesByUserId, createPlace } from "../controllers/places-controller.js";
+
 const router = express.Router();
 
-const DUMMY_PLACES = [
-    {
-        id: 'p1',
-        title: 'house',
-        description: 'my house',
-        location: {
-            lat: 45.35424919832371,
-            lng: -122.86317397425815
-        },
-        address: '22955 sw hosler way, sherwood, OR',
-        creator: 'u1'
-    }, 
-    {
-        id: 'p2',
-        title: 'house 2',
-        description: 'my house 2',
-        location: {
-            lat: 45.35424919832371,
-            lng: -122.86317397425815
-        },
-        address: '22955 sw hosler way, sherwood, OR',
-        creator: 'u1'
-    }
-]
+
 
 //gets a single place with matching id
-router.get('/:pid', (req, res, next) => {
-    const placeId = req.params.pid;
-    const place = DUMMY_PLACES.find(place => {
-        return place.id === placeId
-    });
-    if (place) {
-        res.json({place});
-    } else{
-        return res.json({message: "no place found"})
-    }
-});
+router.get('/:pid', getPlaceById);
 
 //gets an array of places associated with a user id
-router.get('/user/:uid', (req, res, next) => {
-    const userId = req.params.uid;
-    const usersPlaces = DUMMY_PLACES.filter((place) => {
-        return place.creator === userId;
-    });
+router.get('/user/:uid', getPlacesByUserId);
 
-    if (usersPlaces) {
-        res.json({usersPlaces});
-    } else{
-        return res.json({message: "no places found for user"})
-    }
-});
+//add a new place
+router.post("/", createPlace);
 
 export default router;

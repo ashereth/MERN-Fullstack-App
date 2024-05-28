@@ -1,5 +1,7 @@
 import express from "express";
 
+import HttpError from "../models/http-error.js";
+
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
