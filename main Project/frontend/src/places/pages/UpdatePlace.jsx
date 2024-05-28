@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import Card from "../../shared/components/UIElements/Card";
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "../../shared/util/validators";
 import useForm from "../../shared/hooks/form-hook";
 import './PlaceForm.css';
@@ -41,19 +42,23 @@ const UpdatePlace = () => {
 
     //useEffect to make sure setFormData isnt called on every reload which could create a infinite loop
     useEffect(() => {
-        setFormData({
-            title: {
-                value: identifiedPlace.title,
-                isValid: true
-            },
-            description: {
-                value: identifiedPlace.description,
-                isValid: true
-            }
-        }, true);
+        //make sure the identified place was found
+        if (identifiedPlace) {
+            setFormData({
+                title: {
+                    value: identifiedPlace.title,
+                    isValid: true
+                },
+                description: {
+                    value: identifiedPlace.description,
+                    isValid: true
+                }
+            }, true);
+        }
+
         setIsLoading(false);
     }, [setFormData, identifiedPlace]);
-    
+
 
     const placeUpdateSubmitHandler = event => {
         event.preventDefault();
@@ -63,12 +68,14 @@ const UpdatePlace = () => {
     if (!identifiedPlace) {
         return (
             <div className="center">
-                <h2>Could not find place</h2>
+                <Card>
+                    <h2>Could not find place</h2>
+                </Card>
             </div>
         )
     }
 
-    if(isLoading){
+    if (isLoading) {
         return (
             <div className="center">
                 <h2>Loading...</h2>
