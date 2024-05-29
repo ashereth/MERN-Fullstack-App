@@ -1,6 +1,7 @@
 import express from "express";
+import { check } from 'express-validator';
 
-import { getPlaceById, getPlacesByUserId, createPlace, updatePlace, deletePlace } from "../controllers/places-controller.js";
+import { getPlaceById, getPlacesByUserId, createPlace, updatePlace, deletePlace } from "../controllers/places-controllers.js";
 
 const router = express.Router();
 
@@ -13,10 +14,26 @@ router.get('/:pid', getPlaceById);
 router.get('/user/:uid', getPlacesByUserId);
 
 //add a new place
-router.post("/", createPlace);
+// use check middleware to make sure title isnt empty and description is at least 5 chars
+router.post(
+    "/",
+    [
+        check('title').not().isEmpty(),
+        check('description').isLength({ min: 5 }),
+        check('address').not().isEmpty(),
+    ],
+    createPlace
+);
 
 //update a place
-router.patch('/:pid', updatePlace);
+router.patch(
+    '/:pid',
+    [
+        check('title').not().isEmpty(),
+        check('description').isLength({ min: 5 }),
+    ],
+    updatePlace
+);
 
 //delete a place
 router.delete('/:pid', deletePlace)
