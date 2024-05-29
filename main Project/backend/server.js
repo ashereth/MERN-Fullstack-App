@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 
 import placesRoutes from "./routes/places-routes.js";
 import usersRoutes from './routes/users-routes.js';
+import HttpError from "./models/http-error.js";
 
 const app = express();
 
@@ -15,15 +16,21 @@ app.use("/api/places", placesRoutes);
 
 app.use("/api/users", usersRoutes);
 
+//middleware for unsupported routes
+app.use((req, res, next) => {
+    const error = new HttpError('Could not find route.', 404);
+    throw error;
+});
+
 //error handling middleware
 app.use((error, req, res, next) => {
     //if response already sent forward error
-    if(res.headerSent){
+    if (res.headerSent) {
         return next(error);
     }
     //set status or set status to 500
     res.status(error.code || 500);
-    res.json({message: error.message || 'An unknown error occurred!'});
+    res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
 app.listen(5000);

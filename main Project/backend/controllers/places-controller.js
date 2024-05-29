@@ -1,21 +1,11 @@
 import HttpError from "../models/http-error.js";
+import { v4 as uuidv4 } from 'uuid';
 
-const DUMMY_PLACES = [
+let DUMMY_PLACES = [
     {
         id: 'p1',
         title: 'house',
         description: 'my house',
-        location: {
-            lat: 45.35424919832371,
-            lng: -122.86317397425815
-        },
-        address: '22955 sw hosler way, sherwood, OR',
-        creator: 'u1'
-    },
-    {
-        id: 'p2',
-        title: 'house 2',
-        description: 'my house 2',
         location: {
             lat: 45.35424919832371,
             lng: -122.86317397425815
@@ -58,6 +48,7 @@ const createPlace = (req, res, next) => {
     const { title, description, location, address, creator } = req.body;
     //make the new place using the data
     const newPlace = {
+        id: uuidv4(),
         title,
         description,
         location,
@@ -67,8 +58,36 @@ const createPlace = (req, res, next) => {
     //add new place to database
     DUMMY_PLACES.push(newPlace);
     //respond with status 201
-    res.status(201).json({place: newPlace});
-    console.log('here')
+    res.status(201).json({ place: newPlace });
 }
 
-export { getPlaceById, getPlacesByUserId, createPlace };
+const updatePlace = (req, res, next) => {
+    const placeId = req.params.pid;
+    const { title, description } = req.body;
+    const placeCopy = {
+        ...DUMMY_PLACES.find(place => {
+            return place.id = placeId;
+        })
+    };
+    const placeIndex = DUMMY_PLACES.findIndex(place => place.id === placeId);
+
+    if (placeIndex >= 0) {
+        placeCopy.title = title;
+        placeCopy.description = description;
+        DUMMY_PLACES[placeIndex] = placeCopy;
+        res.status(200).json(DUMMY_PLACES[placeIndex]);
+    } else {
+        next(new HttpError("Could not find place to be updated", 404));
+    }
+}
+
+const deletePlace = (req, res, next) => {
+    const placeId = req.params.pid;
+    DUMMY_PLACES = DUMMY_PLACES.filter(place => {
+        return place.id != placeId;
+    });
+
+    res.status(200).json({ message: 'Place deleted.' });
+}
+
+export { getPlaceById, getPlacesByUserId, createPlace, updatePlace, deletePlace };
