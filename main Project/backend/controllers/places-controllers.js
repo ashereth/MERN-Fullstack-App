@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { validationResult } from 'express-validator'
 
+import getCoordinatesForAddress from '../util/location.js';
 import HttpError from "../models/http-error.js";
+
 let DUMMY_PLACES = [
     {
         id: 'p1',
@@ -44,22 +46,31 @@ const getPlacesByUserId = (req, res, next) => {
     }
 }
 
-const createPlace = (req, res, next) => {
+const createPlace =  async (req, res, next) => {
     //check all the validators for errors
     const errors = validationResult(req);
     //if errors occured throw an error
     if (!errors.isEmpty()) {
-        throw new HttpError('Invalid input', 422);
+        //for async functions you must use next() not throw
+        return next(new HttpError('Invalid input', 422));
     }
 
     //get the data from the body
-    const { title, description, location, address, creator } = req.body;
+    const { title, description,  address, creator } = req.body;
+    //get the coordinates or throw error
+    let coordinates;
+    try {
+        coordinates = await getCoordinatesForAddress(address);
+    } catch (error) {
+        return next(error);
+    }
+    
     //make the new place using the data
     const newPlace = {
         id: uuidv4(),
         title,
         description,
-        location,
+        location: coordinates,
         address,
         creator
     };
