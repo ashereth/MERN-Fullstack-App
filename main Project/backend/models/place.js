@@ -11,7 +11,8 @@ const placeSchema = new Schema({
         lat: { type: Number, required: true },
         lng: { type: Number, required: true }
     },
-    creator: { type: String, required: true }
+    //relation between places and users
+    creator: { type: mongoose.Types.ObjectId, required: true, ref: 'User' }
 })
 
 export default mongoose.model('Place', placeSchema);
