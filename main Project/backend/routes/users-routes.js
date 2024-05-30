@@ -15,7 +15,7 @@ router.post(
     [
         check('name').not().isEmpty(),
         check('email').normalizeEmail().isEmail(),//normalize email to lowercase and make sure its valid
-        check('password').isLength({ min: 4 })
+        check('password').isLength({ min: 6 })
     ],
     createUser
 );

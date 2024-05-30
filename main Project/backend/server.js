@@ -1,10 +1,13 @@
 import express from "express";
 import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import dotenv from 'dotenv';
 
 import placesRoutes from "./routes/places-routes.js";
 import usersRoutes from './routes/users-routes.js';
 import HttpError from "./models/http-error.js";
 
+dotenv.config();
 const app = express();
 
 //middleware to parse body and extract json data
@@ -33,5 +36,18 @@ app.use((error, req, res, next) => {
     res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-app.listen(5000);
+
+//connect to database using mongoose
+mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {//if connection successful start server
+        console.log('connected to database!');
+        app.listen(5000);
+        console.log('server started!');
+    })
+    .catch(err => {//if connection unsuccessful log error
+        console.log(err)
+    })
+
+
 console.log("app starting at http://localhost:5000/")
