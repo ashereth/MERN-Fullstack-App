@@ -15,14 +15,17 @@ const UsersList = (props) => {
         </div>)
     }
 
+    
+
     return <ul className="users-list">
         {props.items.map((user) => {
+            console.log(user);
             return <UserItem
                 key={user.id}
                 id={user.id}
                 image={user.image}
                 name={user.name}
-                placeCount={user.placeCount} />
+                placeCount={user.places.length} />
         })}
     </ul>
 };

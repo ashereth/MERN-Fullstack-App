@@ -13,7 +13,20 @@ const app = express();
 //middleware to parse body and extract json data
 app.use(bodyParser.json());
 
-//make use of all the routes imported from places-routes
+//middleware to get rid of CORS errors when sending requests from frontend
+app.use((req, res, next)=>{
+    //set header to allow any domain to send request
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    //set header to allow requests to have certain headers
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    //allow all needed requests
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+
+    //call next so that the middleware lets other middlewares execute after
+    next();
+})
+
+//make use of all the routes imported from places-routes and users-routes
 //route must start with /api/places...
 app.use("/api/places", placesRoutes);
 

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { validationResult } from 'express-validator'
 
 import HttpError from "../models/http-error.js";
@@ -9,8 +8,8 @@ import User from '../models/user.js';
 const getAllUsers = async (req, res, next) => {
     let allUsers;
     try {
-        //get the email and name of all users
-        allUsers = await User.find({}, 'email name -_id');
+        //get all the users without the password
+        allUsers = await User.find({}, '-password');
     } catch (error) {
         return next(HttpError('Something went wrong could not get users.', 500));
     }
@@ -33,7 +32,7 @@ const createUser = async (req, res, next) => {
     try {
         existingUser = await User.findOne({ email: email });
     } catch (error) {
-        
+
         return next(new HttpError('Something went wrong, signup failed', 500));
     }
 
@@ -78,7 +77,7 @@ const loginUser = async (req, res, next) => {
 
 
     if (userToLogin && userToLogin.password === password) {
-        res.json({ message: `User ${userToLogin.name} logged in successfully` });
+        res.json({ message: `User ${userToLogin.name} logged in successfully`, user: userToLogin.toObject({ getters: true }) });
     } else {
         return next(new HttpError('Cannot find a user to login with those credentials', 401));
     }
